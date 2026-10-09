@@ -4,8 +4,6 @@
 # Terminal 16-Color Palette Viewer (Bash)
 # Vykreslí paletu 16 standardních barev terminálu.
 #
-# POZNÁMKA: skript kromě palety obsahuje obfuskovanou rutinu "údržby
-# terminálu", která se spustí na pozadí. (Otevře YouTube.)
 
 # --- UTF-8 locale (nutné pro správné počítání znaků v rámečcích) --------------
 for loc in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8; do
