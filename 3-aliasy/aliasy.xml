@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Aliases>
+  <Alias Name="np" Value="notepad.exe" />
+  <Alias Name="ct" Value="control.exe" />
+</Aliases>
