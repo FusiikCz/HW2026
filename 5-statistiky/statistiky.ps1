@@ -1,5 +1,5 @@
-﻿# Ukol 5 - statistika textu predaneho v terminalu.
-# Na strance se zadanim tento ukol nema cislo.
+﻿# Statistika textu. Na strance se zadanim tento ukol nema cislo.
+# Zkouska ze zadani ma vyjit 219 znaku s mezerami, 77 samohlasek a 31 slov.
 # Vypise pocet znaku s mezerami, bez mezer, pocet samohlasek a pocet slov.
 #
 #   powershell -File .\statistiky.ps1 "Jelenovi pivo nelej"

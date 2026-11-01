@@ -55,30 +55,33 @@ function Write-PalindromeResult {
 }
 
 $ukazky = @(
-    'Jelenovi pivo nelej'
-    'Kobyla má malý bok'
-    'Kupředu udeř puk'
-    'Dal kopat Ota poklad'
+    @{ Text = 'Jelenovi pivo nelej'; MaByt = $true }
+    @{ Text = 'Kobyla má malý bok'; MaByt = $true }
+    @{ Text = 'Kupředu udeř puk'; MaByt = $true }
+    @{ Text = 'Dal kopat Ota poklad'; MaByt = $true }
+    @{ Text = 'Toto není palindrom'; MaByt = $false }
 )
 
 if ($Text -and $Text.Count -gt 0) {
-    $vety = @(($Text -join ' ').Trim())
+    $vety = @(@{ Text = (($Text -join ' ').Trim()); MaByt = $null })
 }
 else {
     Write-Host 'Test vět ze zadání:'
     $vety = $ukazky
 }
 
-$vsechnyJsou = $true
+$shoda = 0
 foreach ($veta in $vety) {
-    $vysledek = Test-PalindromeText -Value $veta
+    $vysledek = Test-PalindromeText -Value $veta.Text
     Write-PalindromeResult -Result $vysledek
-    if (-not $vysledek.IsPalindrome) {
-        $vsechnyJsou = $false
+    if ($null -ne $veta.MaByt) {
+        $ok = $vysledek.IsPalindrome -eq $veta.MaByt
+        if ($ok) { $shoda++ }
+        else { Write-Host '  Nesouhlasí s očekáváním ze zadání.' -ForegroundColor Red }
     }
 }
 
 Write-Host ''
-if (-not $Text -and $vsechnyJsou) {
-    Write-Host 'Všechny čtyři testovací věty jsou palindromy.' -ForegroundColor Green
+if (-not $Text) {
+    Write-Host ("Shoda se zadáním: {0} z {1}." -f $shoda, $vety.Count) -ForegroundColor Green
 }
