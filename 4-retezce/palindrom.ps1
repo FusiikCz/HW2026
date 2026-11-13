@@ -1,4 +1,4 @@
-﻿# Ukol 4 - overeni, ze zadany text je palindrom.
+﻿# Ukol 4.1 - overeni, ze zadany text je palindrom.
 # Ignoruje mezery, interpunkci, velikost pismen a diakritiku.
 # Spusteni: powershell -File .\palindrom.ps1
 #           powershell -File .\palindrom.ps1 "Jelenovi pivo nelej"

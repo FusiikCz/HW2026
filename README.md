@@ -33,30 +33,26 @@ powershell -File .\3-aliasy\aliasy.ps1
 
 Skript aliasy vytvoří, uloží `aliasy.json` a `aliasy.xml`, smaže je, obnoví z JSON, znovu smaže a obnoví z XML. Po skončení v té relaci platí `np` a `ct`.
 
-## 4. Palindrom
+## 4. Práce s řetězci
+
+Složka: `4-retezce`
+
+### 4.1 Palindrom
 
 Vytvořte program v PowerShellu, který ověří, že zadaný text je palindrom. K testu použijte např. "Jelenovi pivo nelej", "Kobyla má malý bok", "Kupředu udeř puk", "Dal kopat Ota poklad", "Toto není palindrom".
 
-Složka: `4-palindrom`
-
 ```powershell
-powershell -File .\4-palindrom\palindrom.ps1
-powershell -File .\4-palindrom\palindrom.ps1 "Jelenovi pivo nelej"
+powershell -File .\4-retezce\palindrom.ps1
 ```
 
 Bez argumentu ověří pět vět ze zadání. Věta „Toto není palindrom“ palindrom není. Mezery, interpunkce, velikost písmen a diakritika se při porovnání nepočítají.
 
-## Statistika textu
-
-Na stránce se zadáním tento úkol nemá číslo.
+### 4.2 Statistika textu
 
 Vytvořte program, kterému v terminálu předám text, a on mi vypíše počet znaků textu s mezerami i bez mezer, počet samohlásek a počet slov.
 
-Složka: `5-statistiky`
-
 ```powershell
-powershell -File .\5-statistiky\statistiky.ps1 "Jelenovi pivo nelej"
-powershell -File .\5-statistiky\statistiky.ps1
+powershell -File .\4-retezce\statistiky.ps1 "Jelenovi pivo nelej"
 ```
 
 Když text chybí, skript se na něj zeptá. Samohlásky jsou a, á, e, é, ě, i, í, o, ó, u, ú, ů, y, ý.
@@ -78,3 +74,29 @@ powershell -File .\5-cim\reseni.ps1
 ```
 
 Třída tiskáren je `Win32_Printer`. Popisek disku je `Win32_Volume`. Uzamčení účtu je `Win32_UserAccount.Lockout`, přihlášení doplňuje `Win32_UserProfile`. `Get-LocalUser` Lockout nemá.
+
+Přejmenování disku C: na System chce PowerShell spuštěný jako správce.
+
+## 6. PowerShell providers
+
+Složka: `6-providers`
+
+### 6.1 Instalovaný software
+
+Vytvořte skript, který vypíše co nejpodrobnější seznam nainstalovaného softwaru ve Windows. Najděte alespoň 3 různé zdroje informací o instalovaném softwaru, ale nepoužívejte rozhraní WMI/CIM. Veškerý nalezený software spojte do jednoho seznamu ze kterého odstraňte duplicity.
+
+```powershell
+powershell -File .\6-providers\software.ps1
+```
+
+Tři zdroje jsou klíče registru Uninstall: HKLM 64bit, HKLM 32bit (WOW6432Node) a HKCU. Stejný název zůstane v seznamu jednou.
+
+### 6.2 NumLock před přihlášením
+
+Zjistěte, zda je před přihlášením uživatele zapnuta klávesa NumLock. Pokud není, tak proveďte potřebnou změnu.
+
+```powershell
+powershell -File .\6-providers\numlock.ps1
+```
+
+Čte `HKEY_USERS\.DEFAULT\Control Panel\Keyboard\InitialKeyboardIndicators`. Hodnota 2 i 2147483648 znamená zapnutý NumLock. Když je vypnutý, skript nastaví 2.
