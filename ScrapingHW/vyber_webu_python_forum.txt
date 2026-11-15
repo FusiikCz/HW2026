@@ -1,0 +1,100 @@
+VÝBĚR A PRŮZKUM WEBOVÉ STRÁNKY
+Datum: 14. 10. 2026
+
+1. VYBRANÝ WEB
+
+Název: Discussions on Python.org
+Adresa: https://discuss.python.org/
+Zaměření: veřejné diskuse o programovacím jazyce Python.
+Pro projekt plánujeme kategorii Python Help, obsahující programátorské
+dotazy a odpovědi ostatních účastníků.
+
+Web jsme vybrali jako náhradu za Security Stack Exchange. Cílem cvičení
+je vyzkoušet základní techniky scrapování HTML, nikoli získávání dat přes API.
+Python fórum nabízí tematické diskuse a v dodaném robots.txt nemá plošný
+zákaz procházení pro obecného robota. Unikátnost výběru ve třídě a vhodnost
+webu ještě musí potvrdit vyučující.
+
+2. PLÁNOVANÁ EXTRAKCE A KLÍČOVÉ PRVKY WEBU
+
+Klíčové prvky: kategorie, seznam témat, detail tématu, jednotlivé příspěvky,
+odpovědi, uživatelské podpisy, časové údaje a navigace mezi příspěvky.
+
+Plánovaná data: název tématu, zdrojová URL, text dotazu a odpovědí,
+datum příspěvku, veřejné označení autora pro přiznání autorství a počet reakcí,
+pokud budou tyto údaje dostupné ve stahovaném HTML.
+
+Vlastní scraper napíšeme v Pythonu. HTTP klient (například httpx) stáhne HTML
+a BeautifulSoup zajistí vyhledání prvků a extrakci textu. Výsledky uložíme
+do JSON a CSV. Nebudeme používat JSON API jako náhradu parsování HTML.
+
+Fórum používá Discourse. Před implementací ověříme, zda HTML obsahuje všechny
+požadované příspěvky a jak se načítají delší vlákna. Dostupnost všech dat
+v jednom HTML dokumentu zatím není ověřena.
+
+3. VYSVĚTLENÍ ROBOTS.TXT
+
+Adresa: https://discuss.python.org/robots.txt
+Výklad vychází z obsahu dodaného při výběru webu; před spuštěním scraperu
+se načte aktuální soubor.
+
+robots.txt sděluje robotům pravidla procházení jednotlivých URL.
+User-agent určuje robota nebo skupinu robotů, pro které následující pravidla
+platí. Disallow určuje zakázané cesty. Hvězdička v User-agent: * označuje
+obecnou skupinu robotů bez vlastní specifické skupiny.
+
+U robotů mauibot, semrushbot, ahrefsbot, blexbot a seo spider je uvedeno
+Disallow: /. Pro tyto roboty je zakázáno procházení celého webu.
+Naše aplikace se bude pravdivě identifikovat vlastním User-Agentem
+a bude respektovat pravidla skupiny User-agent: *.
+
+Obecná skupina zakazuje tyto cesty a vzory:
+
+- /admin/ a /auth/: administrace a autentizace.
+- /assets/js/browser-update*.js: odpovídající JavaScriptové soubory.
+- /email/: stránky pod touto cestou.
+- /session a /user-api-key: adresy začínající uvedenými cestami.
+- /*?api_key* a /*?*api_key*: adresy odpovídající uvedeným vzorům,
+  zejména URL s api_key v části za otazníkem.
+- /badges, /my a /search: adresy začínající těmito cestami.
+- /tag/*/l a /g: adresy odpovídající těmto pravidlům.
+- /t/*/*.rss a /c/*.rss: odpovídající RSS adresy témat a kategorií.
+
+Pravidla se vyhodnocují podle URL a mohou odpovídat také delší cestě.
+Nestačí tedy porovnávat jen přesné názvy jednotlivých stránek.
+
+Běžné HTML stránky témat pod /t/ a kategorií pod /c/ nejsou těmito
+obecnými pravidly plošně zakázány. Každou konkrétní URL však scraper
+před návštěvou zkontroluje, včetně odkazů získaných z navigace.
+
+Soubor má samostatnou skupinu Googlebot s vlastními pravidly.
+Tato skupina neplatí pro náš scraper; nebudeme se za Googlebot vydávat.
+
+Sitemap: https://discuss.python.org/sitemap.xml
+Tato položka odkazuje na mapu webu, která může pomoci s nalezením URL.
+Nepředstavuje samostatné svolení ke stahování všech uvedených stránek.
+
+4. PODMÍNKY POUŽITÍ A ŠETRNÉ STAHOVÁNÍ
+
+Neexistence zákazu v robots.txt sama o sobě není právní oprávnění
+k libovolnému kopírování nebo zveřejnění obsahu. Je nutné respektovat
+také podmínky služby, autorská práva a ochranu osobních údajů.
+
+Podle ověřené stránky podmínek jsou uživatelské příspěvky licencovány
+pod Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported
+(CC BY-NC-SA 3.0). Při použití obsahu je nutné dodržet přiznání autorství,
+nekomerční použití a při sdílení upraveného obsahu příslušné podmínky
+ShareAlike. Případné úpravy textů označíme a zachováme odkaz na licenci.
+
+Scraper bude pracovat s malým vzorkem veřejných diskusí, používat prodlevy
+a lokální cache. Nebude obcházet přihlášení, CAPTCHA ani blokace.
+Při HTTP 429 bude respektovat pokyny serveru; při zákazu přístupu zastaví
+stahování. Nebudeme sbírat profily, kontaktní údaje ani vytvářet profily osob.
+
+5. ZDROJE
+
+Web: https://discuss.python.org/
+Pravidla robotů: https://discuss.python.org/robots.txt
+Podmínky služby: https://discuss.python.org/tos
+Licence: https://creativecommons.org/licenses/by-nc-sa/3.0/
+Standard robots.txt: https://www.rfc-editor.org/rfc/rfc9309
