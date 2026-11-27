@@ -9,15 +9,9 @@ Tok: titulní strana kategorie -> seznam témat -> stránky vlákna -> JSONL.
 Soubor tématu: <root>/<zdroj>/<rok>/<měsíc>/<zdroj>-<YYMMDD>-<hash8>.jsonl
 První řádek je téma, další řádky komentáře; nové komentáře se pouze připojují.
 
-Rozhodnutí, která je vhodné obhájit u obhajoby:
-- Datum v cestě je datum PUBLIKACE tématu. Kdyby to bylo datum stažení, vznikne
-  každý den jiný soubor pro totéž téma a připojování (mode="a") ztratí smysl.
-- parent_id je vždy null. Crawler HTML Discourse neobsahuje odkaz na rodičovský
-  příspěvek, takže vztah nelze spolehlivě určit; data se nevymýšlejí.
-- likes se berou z meta[itemprop=upvoteCount] u příspěvku (crawler HTML je
-  obsahuje). dislikes web nenabízí, proto je vždy null.
-- Model je append-only: editace a smazání příspěvků se nepřenášejí.
+
 """
+
 import argparse
 import contextlib
 import hashlib
