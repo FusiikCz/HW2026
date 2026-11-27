@@ -535,7 +535,7 @@ def validate(root):
     print(f"Souborů: {len(files)}, komentářů: {comments_total}, chyb: {len(problems)}")
     return 1 if problems else 0
 
-
+#jednou za hodinu se spustí funkce run
 def loop(args):
     while True:
         started = time.monotonic()

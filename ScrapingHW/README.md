@@ -95,8 +95,3 @@ Návratové kódy: `0` úspěch, `1` chyba kontroly nebo cyklu, `2` už běží 
 | kontrola datového modelu | `validate()` |
 | zámek jedné instance | `single_instance()` |
 
-## Co říct u obhajoby
-
-- Skript jede trvale: `python python_forum_scraper_v2.py data --watch` spouští další cyklus hodinu po začátku předchozího.
-- Datum v cestě je datum publikace, proto se nové komentáře připojují do stejného souboru.
-- `parent_id` a `dislikes` jsou `null`, protože je crawler HTML nenabízí. Lajky se berou z `upvoteCount`.
